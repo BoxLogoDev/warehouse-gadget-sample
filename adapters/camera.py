@@ -5,9 +5,31 @@
 
 실기기 교체 지점:
 - Pi: PiCamera (rpicam-still 호출). 환경변수 RPICAM_CMD로 명령 교체 가능.
+- 자동 감지: build_camera_adapter("auto")는 실행 시점에 rpicam-still
+  (구 libcamera-still 포함) 명령이 PATH에 있는지 확인해, 있으면 PiCamera,
+  없으면 SimulatedCamera를 돌려준다. CLI의 --camera 기본값이 auto라
+  같은 명령으로 PC(시뮬레이터)와 Pi(실카메라)를 오갈 수 있다.
 - SenseCAP Watcher: camera.capture(JPEG base64 반환)를 받는 구현을
   이 인터페이스로 추가하면 된다 (구성안 4절 어댑터 표 참조).
 """
+
+# 자동 감지에서 차례로 찾아볼 Pi 카메라 명령 이름
+PI_CAMERA_COMMANDS = ("rpicam-still", "libcamera-still")
+
+
+def detect_camera_command():
+    """사용 가능한 Pi 카메라 명령 경로를 찾는다. 없으면 None.
+
+    우선순위: 환경변수 RPICAM_CMD → rpicam-still → libcamera-still.
+    """
+    override = os.environ.get("RPICAM_CMD", "")
+    if override:
+        return shutil.which(override) or (override if Path(override).exists() else None)
+    for name in PI_CAMERA_COMMANDS:
+        found = shutil.which(name)
+        if found:
+            return found
+    return None
 
 import abc
 import os
@@ -62,8 +84,8 @@ class PiCamera(CameraAdapter):
     name = "pi"
 
     def __init__(self, command=None, width=1920, height=1440):
-        # 환경변수 RPICAM_CMD가 있으면 그 명령을 우선한다.
-        self.command = command or os.environ.get("RPICAM_CMD", "rpicam-still")
+        # 명시 인자 > 환경변수 RPICAM_CMD·자동 감지 > 기본값 rpicam-still.
+        self.command = command or detect_camera_command() or "rpicam-still"
         self.width = width
         self.height = height
 
@@ -100,4 +122,9 @@ def build_camera_adapter(kind, assets_dir, out_dir=None):
         return SimulatedCamera(assets_dir)
     if kind == "pi":
         return PiCamera()
-    raise ValueError("알 수 없는 카메라 종류: %s (sim|pi)" % kind)
+    if kind == "auto":
+        command = detect_camera_command()
+        if command:
+            return PiCamera(command=command)
+        return SimulatedCamera(assets_dir)
+    raise ValueError("알 수 없는 카메라 종류: %s (auto|sim|pi)" % kind)

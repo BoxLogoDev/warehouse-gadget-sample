@@ -22,7 +22,12 @@ sys.path.insert(0, str(BASE))
 
 import data as ewm_data  # noqa: E402
 import flow  # noqa: E402
-from adapters import VoiceAdapter, build_camera_adapter, build_counting_adapter  # noqa: E402
+from adapters import (  # noqa: E402
+    SamCountingError,
+    VoiceAdapter,
+    build_camera_adapter,
+    build_counting_adapter,
+)
 
 OUT_BASE = BASE / "out"
 ASSETS = BASE / "assets"
@@ -78,6 +83,8 @@ def cmd_run(args):
                           policy=args.on_mismatch, resolver=resolver)
     print("\n산출물: %s" % run_dir)
     print(json.dumps(report["summary"], ensure_ascii=False))
+    print()
+    print(flow.render_report_table(report))
     return 0
 
 
@@ -118,18 +125,7 @@ def cmd_report(args):
     if report is None:
         print("아직 실행 기록이 없습니다. 먼저 run을 실행하세요.")
         return 1
-    s = report["summary"]
-    print("완료 보고 — %s (%s)" % (report["warehouse"]["name"], report["generated_at"]))
-    print("총 %d건 · 일치 %d · 불일치 %d (부족 %d · 초과 %d)" % (
-        s["total"], s["match"], s["mismatch"], s["shortage"], s["overage"]))
-    for r in report["tasks"]:
-        line = "- %s 빈 %s · EWM %d / 계수 %d / 확정 %d박스 · %s" % (
-            r["task_id"], r["bin"], r["expected_qty"], r["counted_qty"],
-            r["final_qty"], r["action"])
-        if r["note"]:
-            line += " · 메모: " + r["note"]
-        print(line)
-    print("EWM 결과 전송: %s" % report["ewm_transmission"])
+    print(flow.render_report_table(report))
     return 0
 
 
@@ -138,7 +134,8 @@ def main(argv=None):
     sub = parser.add_subparsers(dest="command")
 
     p_run = sub.add_parser("run", help="실사 플로우 전체 실행")
-    p_run.add_argument("--camera", choices=["sim", "pi"], default="sim")
+    p_run.add_argument("--camera", choices=["auto", "sim", "pi"], default="auto",
+                       help="auto=rpicam-still 있으면 Pi, 없으면 시뮬레이터 (기본)")
     p_run.add_argument("--counting", choices=["mock", "sam"], default="mock")
     p_run.add_argument("--on-mismatch", choices=["correct", "accept", "ask"], default="correct",
                        help="불일치 처리: correct=수량 정정, accept=그대로 확정, ask=건마다 묻기")
@@ -148,22 +145,27 @@ def main(argv=None):
 
     p_cap = sub.add_parser("capture", help="빈 1곳 촬영 (SDK system.run 진입점)")
     p_cap.add_argument("--bin", required=True)
-    p_cap.add_argument("--camera", choices=["sim", "pi"], default="sim")
+    p_cap.add_argument("--camera", choices=["auto", "sim", "pi"], default="auto")
 
     sub.add_parser("status", help="최근 실행 요약 (JSON)")
     sub.add_parser("report", help="최근 실행 완료 보고")
 
     args = parser.parse_args(argv)
-    if args.command in (None, "run"):
-        if args.command is None:  # 인자 없이 실행하면 run 기본값으로
-            args = parser.parse_args(["run"])
-        return cmd_run(args)
-    if args.command == "capture":
-        return cmd_capture(args)
-    if args.command == "status":
-        return cmd_status(args)
-    if args.command == "report":
-        return cmd_report(args)
+    try:
+        if args.command in (None, "run"):
+            if args.command is None:  # 인자 없이 실행하면 run 기본값으로
+                args = parser.parse_args(["run"])
+            return cmd_run(args)
+        if args.command == "capture":
+            return cmd_capture(args)
+        if args.command == "status":
+            return cmd_status(args)
+        if args.command == "report":
+            return cmd_report(args)
+    except SamCountingError as exc:
+        # 계수 실연동 실패는 목업으로 대체하지 않고 사유를 명시해 종료한다.
+        print("계수 오류: %s" % exc, file=sys.stderr)
+        return 1
     return 2
 
 

@@ -5,8 +5,20 @@
 실기기 도착 시 이 패키지의 구현 교체만으로 전환된다.
 """
 
-from .camera import CameraAdapter, PiCamera, SimulatedCamera, build_camera_adapter
-from .counting import CountingAdapter, MockCounting, SamCounting, build_counting_adapter
+from .camera import (
+    CameraAdapter,
+    PiCamera,
+    SimulatedCamera,
+    build_camera_adapter,
+    detect_camera_command,
+)
+from .counting import (
+    CountingAdapter,
+    MockCounting,
+    SamCounting,
+    SamCountingError,
+    build_counting_adapter,
+)
 from .voice import VoiceAdapter
 
 __all__ = [
@@ -14,9 +26,11 @@ __all__ = [
     "SimulatedCamera",
     "PiCamera",
     "build_camera_adapter",
+    "detect_camera_command",
     "CountingAdapter",
     "MockCounting",
     "SamCounting",
+    "SamCountingError",
     "build_counting_adapter",
     "VoiceAdapter",
 ]

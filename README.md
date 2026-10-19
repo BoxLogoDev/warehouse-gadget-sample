@@ -13,14 +13,21 @@ Meta Global AI Developer Hackathon 출품작 「SAP EWM × 창고 재고 실사 
 ```bash
 ./run.sh                          # 지시 6건 전체 실행, 산출물은 out/run-<시각>/
 ./run.sh --on-mismatch ask        # 불일치 건마다 정정/확정 선택 + 메모 직접 입력
-python3 warehouse_gadget.py report   # 마지막 실행의 완료 보고
+python3 warehouse_gadget.py report   # 마지막 실행의 완료 보고 (지시별 표)
 python3 warehouse_gadget.py status   # 마지막 실행 요약 (JSON)
+python3 -m unittest discover -s tests   # 회귀 테스트 (기준선: 일치 4 · 불일치 2)
 ```
+
+촬영은 기본값 `--camera auto`다: 실행 시점에 `rpicam-still` 명령이 있으면
+Pi 카메라로, 없으면 시뮬레이터로 자동 선택한다. 강제로 고정하려면
+`--camera pi` 또는 `--camera sim`을 준다. 같은 명령으로 PC와 Pi를 오간다.
 
 실행하면 건마다 지시 수신 → 위치 안내 → 촬영 → 계수 → EWM 대조 →
 (불일치 시) 음성 안내·메모·정정 → 완료 보고 순서로 진행되고,
-실행 폴더에 `result.json`(실사 결과), `run.log`(실행 로그),
-`voice/`(안내 문구 .txt와 음성 .wav)가 남는다.
+실행 폴더에 `result.json`(실사 결과), `report.txt`(지시별 장부/실측/차이·
+EWM 전송 상태 표), `run.log`(실행 로그), `ewm_payload.json`(전송 페이로드),
+`voice/`(안내 문구 .txt와 음성 .wav)가 남는다. run이 끝날 때도 같은 표가
+터미널에 출력된다.
 
 데이터: 인천 물류센터(창고번호 1000), 구역 3·랙 9·재고 36건, 실사 지시 6건.
 웹 데모와 같게 4건 일치, 1건 부족(A-01-02: 장부 8 → 실제 5),
@@ -59,10 +66,11 @@ data.py               목업 EWM 데이터 (EWM 코드 체계 반영, 핵심 시
 flow.py               실사 플로우 본체 (어댑터만 호출, 하드웨어 무지)
 ewm_export.py         완료 보고 → 목업 EWM 전송 (OData 스타일 페이로드 + UI 상태 파일)
 ewm-ui/               Fiori 스타일 목업 EWM 웹 UI (serve.py로 실행, ewm-state.json을 읽음)
-adapters/camera.py    촬영: SimulatedCamera(샘플 이미지) / PiCamera(rpicam-still)
-adapters/counting.py  계수: MockCounting(웹 데모 규칙) / SamCounting(실연동 지점)
+adapters/camera.py    촬영: SimulatedCamera(샘플 이미지) / PiCamera(rpicam-still) / auto 자동 감지
+adapters/counting.py  계수: MockCounting(웹 데모 규칙) / SamCounting(SAM 3.1 실호출 구현)
 adapters/voice.py     음성: 안내 문구 → .wav+.txt (TTS 실연동 지점은 synthesize())
 assets/               시뮬레이터 촬영 샘플 이미지 (tools/make_sample_images.py 생성)
+tests/                회귀 테스트 (unittest, 목업 기준선·어댑터 계약)
 out/                  실행 산출물
 ```
 
@@ -109,8 +117,8 @@ system.run으로 실행하고, 산출된 `out/run-*/result.json`을 `file.read`�
 
 | 지점 | 지금 (샘플) | 실기기 |
 |---|---|---|
-| 촬영 | SimulatedCamera — `assets/` 샘플 이미지 반환 | `run --camera pi` (PiCamera, rpicam-still). Watcher로 가면 `camera.capture` 수신 구현을 `adapters/camera.py`에 같은 인터페이스로 추가 |
-| 계수 | MockCounting — 웹 데모와 같은 목업 규칙 | `adapters/counting.py`의 `SamCounting.count()` 본문 구현 + `SAM_API_BASE_URL`·환경변수 `SAM_API_KEY` 설정. 경계 밖 코드는 무변경 |
+| 촬영 | `--camera auto`(기본) — rpicam-still이 없으면 SimulatedCamera가 `assets/` 샘플 이미지 반환 | Pi에서는 같은 auto가 PiCamera(rpicam-still)를 자동 선택한다. 강제 지정은 `--camera pi`. Watcher로 가면 `camera.capture` 수신 구현을 `adapters/camera.py`에 같은 인터페이스로 추가 |
+| 계수 | MockCounting — 웹 데모와 같은 목업 규칙 | SamCounting은 페이로드 구성·응답 파싱·오류 처리가 구현済. `SAM_API_BASE_URL`·환경변수 `SAM_API_KEY`만 채우면 실호출로 전환되며, 설정 누락·호출 실패 시 목업으로 떨어지지 않고 명시 오류로 종료한다. 실제 Meta Model API 규격이 공개되면 `build_payload`/`parse_response`의 필드 매핑만 맞춘다 |
 | 음성 안내 | 문구 .txt + 무음 .wav 생성 | 환경변수 `WAREHOUSE_TTS_CMD`에 TTS 명령 지정(예: piper). Watcher에서는 결과 텍스트를 기기로 보내 `start_tts` 지점에서 재생 |
 | 음성 메모 | 텍스트 입력(stdin/인자) | push-to-talk 전사 텍스트를 `VoiceAdapter.read_note(provided=...)`로 주입 |
 | EWM | 목업 데이터(`data.py`) + 목업 백엔드 전송(`ewm_export.py` → `ewm-ui/ewm-state.json`, Fiori 스타일 목업 UI로 확인) | 실제 EWM 연동은 설계상 OData 경로 제시만 — 이 샘플 범위 밖 |
