@@ -1,0 +1,582 @@
+{
+  "backend": "Mock EWM — simulated backend",
+  "generated_at": "2026-10-19T04:59:29",
+  "warehouse": {
+    "id": "WH-1000",
+    "warehouse_no": "1000",
+    "name": "인천 물류센터 (WH-1000)",
+    "zones": [
+      {
+        "id": "A",
+        "name": "A구역",
+        "racks": [
+          "A-01",
+          "A-02",
+          "A-03",
+          "A-04"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "B구역",
+        "racks": [
+          "B-01",
+          "B-02",
+          "B-03"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "C구역",
+        "racks": [
+          "C-01",
+          "C-02"
+        ]
+      }
+    ]
+  },
+  "summary": {
+    "total": 6,
+    "match": 4,
+    "mismatch": 2,
+    "shortage": 1,
+    "overage": 1
+  },
+  "transmission": "transferred",
+  "tasks": [
+    {
+      "task_id": "WO-001",
+      "wt_no": "1000000101",
+      "pi_doc": "2026000001",
+      "bin": "A-01-01",
+      "storage_type": "0020",
+      "storage_type_name": "선반 랙",
+      "sku": "SKU-1001",
+      "product_no": "10001001",
+      "product_name": "무선 이어폰 케이스",
+      "hu": "11223344550000000001",
+      "expected_qty": 12,
+      "counted_qty": 12,
+      "final_qty": 12,
+      "diff": 0,
+      "status": "match",
+      "action": "일치 확정",
+      "reason_code": "",
+      "reason_name": "",
+      "adjustment_status": "차이 없음",
+      "note": "",
+      "ui_status": "전송 · 확정 완료"
+    },
+    {
+      "task_id": "WO-002",
+      "wt_no": "1000000102",
+      "pi_doc": "2026000001",
+      "bin": "A-01-02",
+      "storage_type": "0020",
+      "storage_type_name": "선반 랙",
+      "sku": "SKU-1002",
+      "product_no": "10001002",
+      "product_name": "스마트폰 충전기 25W",
+      "hu": "11223344550000000002",
+      "expected_qty": 8,
+      "counted_qty": 5,
+      "final_qty": 5,
+      "diff": -3,
+      "status": "shortage",
+      "action": "수량 정정",
+      "reason_code": "DF01",
+      "reason_name": "수량 차이 — 파손/분리 보관",
+      "adjustment_status": "조정 전기 완료",
+      "note": "샘플 메모: 부족분은 파손 박스로 분리 보관됨",
+      "ui_status": "전송 · 확정 완료"
+    },
+    {
+      "task_id": "WO-003",
+      "wt_no": "1000000103",
+      "pi_doc": "2026000001",
+      "bin": "A-02-02",
+      "storage_type": "0020",
+      "storage_type_name": "선반 랙",
+      "sku": "SKU-2002",
+      "product_no": "10002002",
+      "product_name": "무선 마우스",
+      "hu": "11223344550000000006",
+      "expected_qty": 15,
+      "counted_qty": 15,
+      "final_qty": 15,
+      "diff": 0,
+      "status": "match",
+      "action": "일치 확정",
+      "reason_code": "",
+      "reason_name": "",
+      "adjustment_status": "차이 없음",
+      "note": "",
+      "ui_status": "전송 · 확정 완료"
+    },
+    {
+      "task_id": "WO-004",
+      "wt_no": "1000000104",
+      "pi_doc": "2026000001",
+      "bin": "A-03-01",
+      "storage_type": "0020",
+      "storage_type_name": "선반 랙",
+      "sku": "SKU-3001",
+      "product_no": "10003001",
+      "product_name": "보조배터리 10000mAh",
+      "hu": "11223344550000000009",
+      "expected_qty": 18,
+      "counted_qty": 18,
+      "final_qty": 18,
+      "diff": 0,
+      "status": "match",
+      "action": "일치 확정",
+      "reason_code": "",
+      "reason_name": "",
+      "adjustment_status": "차이 없음",
+      "note": "",
+      "ui_status": "전송 · 확정 완료"
+    },
+    {
+      "task_id": "WO-005",
+      "wt_no": "1000000105",
+      "pi_doc": "2026000001",
+      "bin": "B-01-02",
+      "storage_type": "0010",
+      "storage_type_name": "팔레트 랙",
+      "sku": "SKU-4002",
+      "product_no": "10004002",
+      "product_name": "SSD 외장 케이스",
+      "hu": "11223344550000000018",
+      "expected_qty": 6,
+      "counted_qty": 9,
+      "final_qty": 9,
+      "diff": 3,
+      "status": "overage",
+      "action": "수량 정정",
+      "reason_code": "DF02",
+      "reason_name": "수량 차이 — 오적재(인접 빈 이동)",
+      "adjustment_status": "조정 전기 완료",
+      "note": "샘플 메모: 인접 빈에서 초과분이 이동 적재된 것으로 보임",
+      "ui_status": "전송 · 확정 완료"
+    },
+    {
+      "task_id": "WO-006",
+      "wt_no": "1000000106",
+      "pi_doc": "2026000001",
+      "bin": "B-02-02",
+      "storage_type": "0010",
+      "storage_type_name": "팔레트 랙",
+      "sku": "SKU-5002",
+      "product_no": "10005002",
+      "product_name": "무선 충전 패드",
+      "hu": "11223344550000000022",
+      "expected_qty": 10,
+      "counted_qty": 10,
+      "final_qty": 10,
+      "diff": 0,
+      "status": "match",
+      "action": "일치 확정",
+      "reason_code": "",
+      "reason_name": "",
+      "adjustment_status": "차이 없음",
+      "note": "",
+      "ui_status": "전송 · 확정 완료"
+    }
+  ],
+  "differences": [
+    {
+      "task_id": "WO-002",
+      "wt_no": "1000000102",
+      "pi_doc": "2026000001",
+      "bin": "A-01-02",
+      "storage_type": "0020",
+      "storage_type_name": "선반 랙",
+      "sku": "SKU-1002",
+      "product_no": "10001002",
+      "product_name": "스마트폰 충전기 25W",
+      "hu": "11223344550000000002",
+      "expected_qty": 8,
+      "counted_qty": 5,
+      "final_qty": 5,
+      "diff": -3,
+      "status": "shortage",
+      "action": "수량 정정",
+      "reason_code": "DF01",
+      "reason_name": "수량 차이 — 파손/분리 보관",
+      "adjustment_status": "조정 전기 완료",
+      "note": "샘플 메모: 부족분은 파손 박스로 분리 보관됨",
+      "ui_status": "전송 · 확정 완료"
+    },
+    {
+      "task_id": "WO-005",
+      "wt_no": "1000000105",
+      "pi_doc": "2026000001",
+      "bin": "B-01-02",
+      "storage_type": "0010",
+      "storage_type_name": "팔레트 랙",
+      "sku": "SKU-4002",
+      "product_no": "10004002",
+      "product_name": "SSD 외장 케이스",
+      "hu": "11223344550000000018",
+      "expected_qty": 6,
+      "counted_qty": 9,
+      "final_qty": 9,
+      "diff": 3,
+      "status": "overage",
+      "action": "수량 정정",
+      "reason_code": "DF02",
+      "reason_name": "수량 차이 — 오적재(인접 빈 이동)",
+      "adjustment_status": "조정 전기 완료",
+      "note": "샘플 메모: 인접 빈에서 초과분이 이동 적재된 것으로 보임",
+      "ui_status": "전송 · 확정 완료"
+    }
+  ],
+  "monitor": {
+    "zones": [
+      {
+        "id": "A",
+        "name": "A구역",
+        "racks": [
+          {
+            "id": "A-01",
+            "storage_type": "0020",
+            "storage_type_name": "선반 랙",
+            "bins": [
+              {
+                "bin": "A-01-01",
+                "product_name": "무선 이어폰 케이스",
+                "expected_qty": 12,
+                "counted_qty": 12,
+                "count_status": "match"
+              },
+              {
+                "bin": "A-01-02",
+                "product_name": "스마트폰 충전기 25W",
+                "expected_qty": 8,
+                "counted_qty": 5,
+                "count_status": "shortage"
+              },
+              {
+                "bin": "A-01-03",
+                "product_name": "USB-C 케이블 1m",
+                "expected_qty": 20,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "A-01-04",
+                "product_name": "노트북 거치대",
+                "expected_qty": 6,
+                "counted_qty": null,
+                "count_status": "pending"
+              }
+            ],
+            "progress": 0.5
+          },
+          {
+            "id": "A-02",
+            "storage_type": "0020",
+            "storage_type_name": "선반 랙",
+            "bins": [
+              {
+                "bin": "A-02-01",
+                "product_name": "블루투스 키보드",
+                "expected_qty": 10,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "A-02-02",
+                "product_name": "무선 마우스",
+                "expected_qty": 15,
+                "counted_qty": 15,
+                "count_status": "match"
+              },
+              {
+                "bin": "A-02-03",
+                "product_name": "모니터 암",
+                "expected_qty": 4,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "A-02-04",
+                "product_name": "웹캠 FHD",
+                "expected_qty": 9,
+                "counted_qty": null,
+                "count_status": "pending"
+              }
+            ],
+            "progress": 0.25
+          },
+          {
+            "id": "A-03",
+            "storage_type": "0020",
+            "storage_type_name": "선반 랙",
+            "bins": [
+              {
+                "bin": "A-03-01",
+                "product_name": "보조배터리 10000mAh",
+                "expected_qty": 18,
+                "counted_qty": 18,
+                "count_status": "match"
+              },
+              {
+                "bin": "A-03-02",
+                "product_name": "스마트워치 밴드",
+                "expected_qty": 14,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "A-03-03",
+                "product_name": "태블릿 파우치",
+                "expected_qty": 7,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "A-03-04",
+                "product_name": "HDMI 케이블 2m",
+                "expected_qty": 11,
+                "counted_qty": null,
+                "count_status": "pending"
+              }
+            ],
+            "progress": 0.25
+          },
+          {
+            "id": "A-04",
+            "storage_type": "0020",
+            "storage_type_name": "선반 랙",
+            "bins": [
+              {
+                "bin": "A-04-01",
+                "product_name": "무선 도어벨",
+                "expected_qty": 7,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "A-04-02",
+                "product_name": "LED 스트립 조명",
+                "expected_qty": 12,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "A-04-03",
+                "product_name": "스마트 플러그",
+                "expected_qty": 9,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "A-04-04",
+                "product_name": "온습도 센서",
+                "expected_qty": 15,
+                "counted_qty": null,
+                "count_status": "pending"
+              }
+            ],
+            "progress": 0.0
+          }
+        ]
+      },
+      {
+        "id": "B",
+        "name": "B구역",
+        "racks": [
+          {
+            "id": "B-01",
+            "storage_type": "0010",
+            "storage_type_name": "팔레트 랙",
+            "bins": [
+              {
+                "bin": "B-01-01",
+                "product_name": "기계식 키보드 스위치",
+                "expected_qty": 16,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "B-01-02",
+                "product_name": "SSD 외장 케이스",
+                "expected_qty": 6,
+                "counted_qty": 9,
+                "count_status": "overage"
+              },
+              {
+                "bin": "B-01-03",
+                "product_name": "랜 케이블 CAT6",
+                "expected_qty": 22,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "B-01-04",
+                "product_name": "멀티탭 4구",
+                "expected_qty": 13,
+                "counted_qty": null,
+                "count_status": "pending"
+              }
+            ],
+            "progress": 0.25
+          },
+          {
+            "id": "B-02",
+            "storage_type": "0010",
+            "storage_type_name": "팔레트 랙",
+            "bins": [
+              {
+                "bin": "B-02-01",
+                "product_name": "노트북 파우치 14인치",
+                "expected_qty": 5,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "B-02-02",
+                "product_name": "무선 충전 패드",
+                "expected_qty": 10,
+                "counted_qty": 10,
+                "count_status": "match"
+              },
+              {
+                "bin": "B-02-03",
+                "product_name": "이어폰 팁 세트",
+                "expected_qty": 24,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "B-02-04",
+                "product_name": "휴대용 선풍기",
+                "expected_qty": 8,
+                "counted_qty": null,
+                "count_status": "pending"
+              }
+            ],
+            "progress": 0.25
+          },
+          {
+            "id": "B-03",
+            "storage_type": "0010",
+            "storage_type_name": "팔레트 랙",
+            "bins": [
+              {
+                "bin": "B-03-01",
+                "product_name": "게이밍 마우스 패드",
+                "expected_qty": 18,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "B-03-02",
+                "product_name": "USB 허브 7포트",
+                "expected_qty": 8,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "B-03-03",
+                "product_name": "노트북 쿨링 패드",
+                "expected_qty": 5,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "B-03-04",
+                "product_name": "카드 리더기",
+                "expected_qty": 11,
+                "counted_qty": null,
+                "count_status": "pending"
+              }
+            ],
+            "progress": 0.0
+          }
+        ]
+      },
+      {
+        "id": "C",
+        "name": "C구역",
+        "racks": [
+          {
+            "id": "C-01",
+            "storage_type": "0030",
+            "storage_type_name": "벌크 보관",
+            "bins": [
+              {
+                "bin": "C-01-01",
+                "product_name": "PC 케이스 미들타워",
+                "expected_qty": 4,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "C-01-02",
+                "product_name": "게이밍 모니터 27인치",
+                "expected_qty": 3,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "C-01-03",
+                "product_name": "사무용 의자",
+                "expected_qty": 6,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "C-01-04",
+                "product_name": "전동 스탠딩 데스크 프레임",
+                "expected_qty": 2,
+                "counted_qty": null,
+                "count_status": "pending"
+              }
+            ],
+            "progress": 0.0
+          },
+          {
+            "id": "C-02",
+            "storage_type": "0030",
+            "storage_type_name": "벌크 보관",
+            "bins": [
+              {
+                "bin": "C-02-01",
+                "product_name": "프린터 토너 카트리지",
+                "expected_qty": 10,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "C-02-02",
+                "product_name": "A4 복사용지 박스",
+                "expected_qty": 25,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "C-02-03",
+                "product_name": "라벨 프린터",
+                "expected_qty": 4,
+                "counted_qty": null,
+                "count_status": "pending"
+              },
+              {
+                "bin": "C-02-04",
+                "product_name": "서지 보호 멀티탭 8구",
+                "expected_qty": 13,
+                "counted_qty": null,
+                "count_status": "pending"
+              }
+            ],
+            "progress": 0.0
+          }
+        ]
+      }
+    ]
+  },
+  "inventory_count": 36,
+  "bin_count": 36
+}

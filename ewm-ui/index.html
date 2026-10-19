@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mock EWM · 창고 관리</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="shellbar">
+  <div class="shellbar-left">
+    <span class="shell-logo" aria-hidden="true">▦</span>
+    <span class="shell-title">Mock EWM · 창고 관리</span>
+    <nav class="shell-nav">
+      <a href="#/home" data-nav="home">홈</a>
+      <a href="#/count" data-nav="count">재고 실사</a>
+      <a href="#/monitor" data-nav="monitor">창고 모니터</a>
+      <a href="#/diff" data-nav="diff">차이 내역</a>
+    </nav>
+  </div>
+  <span class="mock-badge">Mock EWM — simulated backend</span>
+</header>
+
+<main id="app">
+  <div id="load-error" class="load-error" hidden>
+    ewm-state.json을 불러오지 못했습니다. 프로젝트 루트에서
+    <code>python3 ewm-ui/serve.py</code>로 서버를 띄운 뒤
+    http://localhost:8077/ 로 접속하세요. 상태 파일은 샘플
+    <code>run</code>의 EWM 전송 단계가 만듭니다.
+  </div>
+
+  <!-- 런치패드 홈 -->
+  <section id="view-home" class="view">
+    <h1 class="page-title">인천 물류센터 (창고번호 1000)</h1>
+    <p class="page-sub" id="home-sub"></p>
+    <div class="tile-row">
+      <a class="tile" href="#/count">
+        <div class="tile-title">재고 실사</div>
+        <div class="tile-kpi" id="tile-count-kpi">–</div>
+        <div class="tile-sub" id="tile-count-sub">창고 태스크 목록 · 실사 결과 확정</div>
+      </a>
+      <a class="tile" href="#/monitor">
+        <div class="tile-title">창고 모니터</div>
+        <div class="tile-kpi" id="tile-monitor-kpi">–</div>
+        <div class="tile-sub" id="tile-monitor-sub">구역·랙별 재고와 실사 진행 상태</div>
+      </a>
+      <a class="tile" href="#/diff">
+        <div class="tile-title">차이 내역</div>
+        <div class="tile-kpi" id="tile-diff-kpi">–</div>
+        <div class="tile-sub" id="tile-diff-sub">차이 수량 · 사유 코드 · 조정 상태</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- 재고 실사: List Report -->
+  <section id="view-count" class="view" hidden>
+    <h1 class="page-title">재고 실사 — 창고 태스크</h1>
+    <p class="page-sub" id="count-sub"></p>
+    <div class="card">
+      <table class="fiori-table" id="task-table">
+        <thead>
+          <tr>
+            <th>창고작업 번호</th><th>실사문서</th><th>저장유형</th><th>저장빈</th>
+            <th>품목번호</th><th>품명</th><th>HU</th>
+            <th class="num">장부수량</th><th class="num">계수수량</th><th class="num">차이</th>
+            <th>상태</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 재고 실사: Object Page -->
+  <section id="view-detail" class="view" hidden>
+    <button class="back-btn" id="detail-back">‹ 목록으로</button>
+    <div class="object-header card">
+      <div>
+        <div class="object-title" id="detail-title">–</div>
+        <div class="object-sub" id="detail-sub">–</div>
+      </div>
+      <span class="status-pill" id="detail-pill">–</span>
+    </div>
+    <div class="facet-row">
+      <div class="card facet">
+        <h3>실사 결과</h3>
+        <dl id="detail-result"></dl>
+      </div>
+      <div class="card facet">
+        <h3>차이 · 조정</h3>
+        <dl id="detail-diff"></dl>
+      </div>
+      <div class="card facet">
+        <h3>전송 정보</h3>
+        <dl id="detail-transfer"></dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- 창고 모니터 -->
+  <section id="view-monitor" class="view" hidden>
+    <h1 class="page-title">창고 모니터</h1>
+    <p class="page-sub" id="monitor-sub"></p>
+    <div id="monitor-zones"></div>
+  </section>
+
+  <!-- 차이 내역 -->
+  <section id="view-diff" class="view" hidden>
+    <h1 class="page-title">차이 내역</h1>
+    <p class="page-sub" id="diff-sub"></p>
+    <div class="card">
+      <table class="fiori-table" id="diff-table">
+        <thead>
+          <tr>
+            <th>저장빈</th><th>품목번호</th><th>품명</th>
+            <th class="num">장부</th><th class="num">계수</th><th class="num">차이</th>
+            <th>사유 코드</th><th>사유</th><th>조정 상태</th><th>메모</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <span>Mock EWM — simulated backend · 실제 SAP 시스템이 아닙니다 (Fiori 스타일 목업)</span>
+  <span id="footer-state"></span>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -22,9 +22,32 @@ python3 warehouse_gadget.py status   # 마지막 실행 요약 (JSON)
 실행 폴더에 `result.json`(실사 결과), `run.log`(실행 로그),
 `voice/`(안내 문구 .txt와 음성 .wav)가 남는다.
 
-데이터: 인천 물류센터(WH-1000), 구역 2·랙 5·재고 20건, 실사 지시 6건.
+데이터: 인천 물류센터(창고번호 1000), 구역 3·랙 9·재고 36건, 실사 지시 6건.
 웹 데모와 같게 4건 일치, 1건 부족(A-01-02: 장부 8 → 실제 5),
-1건 초과(B-01-02: 장부 6 → 실제 9)로 나온다.
+1건 초과(B-01-02: 장부 6 → 실제 9)로 나온다. 데이터에는 EWM 용어 체계를
+반영했다: 저장유형 코드, 저장빈 좌표, 품목번호, HU 번호, 창고 작업(WT) 번호,
+실사 문서 번호, 차이 사유 코드 (전부 목업 값).
+
+## Fiori 스타일 목업 EWM UI
+
+실사가 끝나면 완료 보고 단계가 결과를 "EWM 전송"으로 목업 백엔드에 반영하고,
+아래 UI에서 새로고침하면 지시 상태가 "전송 · 확정 완료"로 바뀐 것을 볼 수 있다.
+
+```bash
+python3 ewm-ui/serve.py          # http://localhost:8077/
+```
+
+- 런치패드 홈: 재고 실사 / 창고 모니터 / 차이 내역 타일
+- 재고 실사: 창고 태스크 목록(List Report) → 행 선택 시 상세(Object Page)
+- 창고 모니터: 구역·랙별 재고와 실사 진행 상태
+- 차이 내역: 불일치 건의 차이 수량·사유 코드·조정 상태
+
+전송 산출물: 실행 폴더의 `ewm_payload.json`(OData 스타일 전송 페이로드)과
+`ewm-ui/ewm-state.json`(UI가 읽는 상태 스냅샷).
+
+> 이 UI는 SAP Fiori 디자인 언어를 자체 HTML/CSS로 재현한 **목업**이며,
+> 실제 SAP 화면 캡처나 SAP 시스템이 아니다. 모든 화면에
+> "Mock EWM — simulated backend" 표기가 들어간다.
 
 ## 구조
 
@@ -32,8 +55,10 @@ python3 warehouse_gadget.py status   # 마지막 실행 요약 (JSON)
 warehouse_gadget.py   진입점 CLI (run / capture / status / report)
 warehouse-gadget      SDK system.run용 래퍼 (같은 CLI를 이름으로 호출)
 run.sh                PC 단독 실행 스크립트
-data.py               목업 EWM 데이터 (웹 데모 src/data.js와 동일 값)
+data.py               목업 EWM 데이터 (EWM 코드 체계 반영, 핵심 시나리오는 웹 데모와 동일)
 flow.py               실사 플로우 본체 (어댑터만 호출, 하드웨어 무지)
+ewm_export.py         완료 보고 → 목업 EWM 전송 (OData 스타일 페이로드 + UI 상태 파일)
+ewm-ui/               Fiori 스타일 목업 EWM 웹 UI (serve.py로 실행, ewm-state.json을 읽음)
 adapters/camera.py    촬영: SimulatedCamera(샘플 이미지) / PiCamera(rpicam-still)
 adapters/counting.py  계수: MockCounting(웹 데모 규칙) / SamCounting(실연동 지점)
 adapters/voice.py     음성: 안내 문구 → .wav+.txt (TTS 실연동 지점은 synthesize())
@@ -88,7 +113,7 @@ system.run으로 실행하고, 산출된 `out/run-*/result.json`을 `file.read`�
 | 계수 | MockCounting — 웹 데모와 같은 목업 규칙 | `adapters/counting.py`의 `SamCounting.count()` 본문 구현 + `SAM_API_BASE_URL`·환경변수 `SAM_API_KEY` 설정. 경계 밖 코드는 무변경 |
 | 음성 안내 | 문구 .txt + 무음 .wav 생성 | 환경변수 `WAREHOUSE_TTS_CMD`에 TTS 명령 지정(예: piper). Watcher에서는 결과 텍스트를 기기로 보내 `start_tts` 지점에서 재생 |
 | 음성 메모 | 텍스트 입력(stdin/인자) | push-to-talk 전사 텍스트를 `VoiceAdapter.read_note(provided=...)`로 주입 |
-| EWM | 목업 데이터(`data.py`), 전송은 시뮬레이션 표기 | 실제 EWM 연동은 설계상 OData 경로 제시만 — 이 샘플 범위 밖 |
+| EWM | 목업 데이터(`data.py`) + 목업 백엔드 전송(`ewm_export.py` → `ewm-ui/ewm-state.json`, Fiori 스타일 목업 UI로 확인) | 실제 EWM 연동은 설계상 OData 경로 제시만 — 이 샘플 범위 밖 |
 
 ## 샘플 이미지 다시 만들기
 

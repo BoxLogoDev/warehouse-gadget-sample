@@ -145,12 +145,23 @@ def run_all(camera, counting, voice, run_dir, policy="correct", resolver=None, l
         "policy": policy,
         "tasks": records,
         "summary": summary,
-        "ewm_transmission": "simulated",  # 실제 EWM 쓰기 연동은 설계상 제외
+        "ewm_transmission": "transferred (mock EWM backend)",
     }
+
+    # 완료 보고를 목업 EWM 백엔드에 전송 반영한다:
+    # OData 스타일 페이로드(run_dir/ewm_payload.json)와
+    # Fiori 스타일 목업 UI 상태(ewm-ui/ewm-state.json)를 남긴다.
+    import ewm_export
+
+    transfer = ewm_export.export(report, run_dir, Path(__file__).resolve().parent)
+    report["ewm_transfer"] = transfer
+    log("EWM 전송: 실사 결과 %d건을 목업 백엔드에 반영 (페이로드 %s)"
+        % (transfer["posted_items"], transfer["payload_file"]))
+
     voice.announce("실사가 완료됐습니다. %d건 중 %d건 일치, %d건 불일치입니다. "
                    "결과를 EWM에 전송합니다." % (summary["total"], summary["match"], summary["mismatch"]),
                    "99-done")
-    log("완료 보고: 총 %d건 · 일치 %d · 불일치 %d (부족 %d · 초과 %d) — EWM 전송 완료(시뮬레이션)"
+    log("완료 보고: 총 %d건 · 일치 %d · 불일치 %d (부족 %d · 초과 %d) — EWM 전송 완료(목업 백엔드)"
         % (summary["total"], summary["match"], summary["mismatch"],
            summary["shortage"], summary["overage"]))
 
