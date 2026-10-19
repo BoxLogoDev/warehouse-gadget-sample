@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Muse Gadgets Linux SDK의 system.run 진입점 래퍼.
+# Muse 쪽에서 "warehouse-gadget capture --bin A-01-02" 형태로 호출한다.
+exec python3 "$(dirname "$0")/warehouse_gadget.py" "$@"
